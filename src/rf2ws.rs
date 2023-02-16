@@ -10,7 +10,7 @@ use warp::ws::{Message, WebSocket};
 #[derive(Deserialize)]
 pub struct DataRequest {
     pub topic: String,
-    pub body: Map<String, Value>,
+    pub body: Value,
 }
 
 pub async fn client_connection(ws: WebSocket, id: String, servers: Servers, mut server: Server) {
@@ -59,9 +59,9 @@ async fn server_msg(id: &str, msg: Message, servers: &Servers) {
         Some(mut i) => {
             let mut server_data = i.data;
             match data_req.topic.as_str() {
-                "LiveStandings" => server_data.standings = data_req.body,
-                "TrackMap" => server_data.trackmap = data_req.body,
-                "SessionInfo" => server_data.session = data_req.body,
+                "LiveStandings" => server_data.standings = data_req.body.as_array().unwrap().to_owned(),
+                "TrackMap" => server_data.trackmap = data_req.body.as_object().unwrap().to_owned(),
+                "SessionInfo" => server_data.session = data_req.body.as_object().unwrap().to_owned(),
                 _ => return,
             };
             i.latest_message = Instant::now();

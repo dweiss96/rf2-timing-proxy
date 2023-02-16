@@ -54,7 +54,7 @@ pub async fn write_ws_handler(
         Server {
             server_id: name,
             data: Data {
-                standings: serde_json::Map::new(),
+                standings: Vec::new(),
                 session: serde_json::Map::new(),
                 trackmap: serde_json::Map::new(),
             },

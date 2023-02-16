@@ -29,7 +29,7 @@ pub struct EssentialSessionInfo {
 }
 #[derive(Clone, Serialize)]
 pub struct Data {
-    pub standings: serde_json::Map<String, serde_json::Value>,
+    pub standings: Vec<serde_json::Value>,
     pub session: serde_json::Map<String, serde_json::Value>,
     pub trackmap: serde_json::Map<String, serde_json::Value>,
 }
@@ -147,7 +147,7 @@ async fn send_data(clients: Clients, servers: Servers) {
         interval.tick().await;
 
         let svrs = servers.read().await;
-        let mut data_str = "[".to_owned();
+        let mut data_str = "{".to_owned();
         for (sid, server) in svrs.clone() {
             let sname = server.server_id;
             let data = serde_json::to_string(&server.data).unwrap();
@@ -159,7 +159,7 @@ async fn send_data(clients: Clients, servers: Servers) {
         if data_str.len() > 1 {
           _ = data_str.pop();
         };
-        data_str.push_str("]");
+        data_str.push_str("}");
 
         clients.read().await.iter().for_each(|(_, client)| {
             if let Some(sender) = &client.sender {
